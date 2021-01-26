@@ -3,30 +3,69 @@ import './App.css'
 import placeholderImg from './placeholder.png'
 import { ReactComponent as ChevronLeft } from './chevron-left.svg'
 import { ReactComponent as ChevronRight } from './chevron-right.svg'
+import axios from 'axios'
 
 function App() {
   const [searchResult, setSearchResult] = useState()
+  const [input, setInput] = useState("")
+  const [pageCount, setPageCount] = useState(1)
 
   useEffect(() => {
-    const search = async () => {
-      const response = await fetch(
-        'http://www.omdbapi.com/?apikey=a461e386&s=king',
-      )
-
-      const data = await response.json()
-
-      if (!searchResult) {
-        setSearchResult(data)
+    
+      search()
+      if (pageCount>=1){
+        
+        
+        handlePage()
+        
       }
-    }
+      if(pageCount<1){
+        setPageCount(1)
+      }
+    
+  }, [pageCount])
 
-    search()
-  })
+  
+
+  const search = async (input) => {
+    console.log(pageCount)
+    
+    
+   if (input && pageCount===1){
+    setInput(input)
+    axios.get(`http://www.omdbapi.com/?apikey=a461e386&s=${input}&page=${pageCount}`)
+    .then((response)=>{
+      console.log(input)
+      setSearchResult(response.data.Search)
+     
+    })
+  
+   }
+   
+      
+    
+  }
+
+  const handlePage = () => {
+    
+
+      console.log(pageCount)
+      axios.get(`http://www.omdbapi.com/?apikey=a461e386&s=${input}&page=${pageCount}`)
+        .then((filter)=>{
+          
+          console.log(filter.data.Search)
+          console.log(pageCount)
+          setSearchResult(filter.data.Search)
+          
+        })
+     }
+  
+
 
   return (
     <div className="App">
       <div className="search">
-        <input type="text" placeholder="Search..." />
+        <input type="text" placeholder="Search..." onChange={(e) => search(e.target.value)} />
         <button>Search</button>
       </div>
       {!searchResult ? (
@@ -34,10 +73,10 @@ function App() {
       ) : (
         <div className="search-results">
           <div className="chevron">
-            <ChevronLeft />
+            <ChevronLeft  onClick={()=> setPageCount(pageCount - 1)} />
           </div>
           <div className="search-results-list">
-            {searchResult.Search.map(result => (
+            {searchResult.map(result => (
               <div key={result.imdbID} className="search-item">
                 <img
                   src={result.Poster === 'N/A' ? placeholderImg : result.Poster}
@@ -51,12 +90,16 @@ function App() {
             ))}
           </div>
           <div className="chevron">
-            <ChevronRight />
+            <ChevronRight onClick={()=> setPageCount(pageCount + 1)}/>
           </div>
         </div>
+       
       )}
     </div>
   )
 }
 
 export default App
+
+
+ 
