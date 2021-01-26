@@ -11,14 +11,11 @@ function App() {
   const [pageCount, setPageCount] = useState(1)
 
   useEffect(() => {
-    
       search()
       if (pageCount>=1){
-        
-        
-        handlePage()
-        
+        handlePage()  
       }
+      //si el counter baja de 1 a 0 se resetea para que nunca quede en valor negativo
       if(pageCount<1){
         setPageCount(1)
       }
@@ -28,35 +25,20 @@ function App() {
   
 
   const search = async (input) => {
-    console.log(pageCount)
-    
-    
    if (input && pageCount===1){
     setInput(input)
     axios.get(`http://www.omdbapi.com/?apikey=a461e386&s=${input}&page=${pageCount}`)
     .then((response)=>{
-      console.log(input)
       setSearchResult(response.data.Search)
-     
     })
   
-   }
-   
-      
-    
+   } 
   }
 
   const handlePage = () => {
-    
-
-      console.log(pageCount)
       axios.get(`http://www.omdbapi.com/?apikey=a461e386&s=${input}&page=${pageCount}`)
-        .then((filter)=>{
-          
-          console.log(filter.data.Search)
-          console.log(pageCount)
-          setSearchResult(filter.data.Search)
-          
+        .then((response)=>{
+          setSearchResult(response.data.Search)
         })
      }
   
