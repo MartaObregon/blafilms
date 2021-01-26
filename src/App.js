@@ -11,7 +11,8 @@ function App() {
   const [pageCount, setPageCount] = useState(1)
 
   useEffect(() => {
-      search()
+      
+      search(input)
       if (pageCount>=1){
         handlePage()  
       }
@@ -20,7 +21,7 @@ function App() {
         setPageCount(1)
       }
     
-  }, [pageCount])
+  }, [pageCount, input])
 
   
 
@@ -51,13 +52,17 @@ function App() {
         <button>Search</button>
       </div>
       {!searchResult ? (
-        <p>No results yet</p>
+        <p className="no-results">No results yet</p>
       ) : (
+        <>
+        <p className="page-counter">- {pageCount} -</p>
         <div className="search-results">
           <div className="chevron">
             <ChevronLeft  onClick={()=> setPageCount(pageCount - 1)} />
           </div>
+          
           <div className="search-results-list">
+            
             {searchResult.map(result => (
               <div key={result.imdbID} className="search-item">
                 <img
@@ -75,7 +80,8 @@ function App() {
             <ChevronRight onClick={()=> setPageCount(pageCount + 1)}/>
           </div>
         </div>
-       
+        
+       </>
       )}
     </div>
   )
